@@ -1,6 +1,6 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://gwannuu.github.io/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Gwannuu blog'
 theme = ['PaperMod']
 
 params.math = true
