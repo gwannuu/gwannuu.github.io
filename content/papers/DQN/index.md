@@ -3,7 +3,7 @@ date = '2025-03-14T14:28:57+09:00'
 draft = false
 title = 'DQN'
 params.math = true
-bibliography = "data/citations/bibilography.bib"
+# bibliography = "data/citations/bibilography.bib"
 +++
 
 
