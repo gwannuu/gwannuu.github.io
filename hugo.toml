@@ -3,4 +3,20 @@ languageCode = 'en-us'
 title = 'Gwannuu blog'
 theme = ['PaperMod']
 
-params.math = true
+# [markup]
+#   [markup.goldmark]
+#     [markup.goldmark.extensions]
+#       [markup.goldmark.extensions.passthrough]
+#         enable = true
+#         [markup.goldmark.extensions.passthrough.delimiters]
+#           block = [['\[', '\]'], ['$$', '$$']]
+#           inline = [['\(', '\)'], ['$', '$']]
+
+[params]
+    math = true
+    bibliography = "data/citations/bibliography.bib"
+
+[security.exec]
+allow = [
+    '^pandoc$'
+]
