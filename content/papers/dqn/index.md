@@ -75,16 +75,15 @@ In this algorithm, assume that agent gets preprocessed $\phi(s)$ instead of raw 
 - **End for**
 
 # DQN with atari
-
-There already exists Q-learning algorithms that has been combined with experience replay and a simple neural network.[13] But it starts with a low-dimensional state rather than raw visual inputs, which is in **high-diemnsion**.
+There already exists Q-learning algorithms that has been combined with experience replay and a simple neural network. But it starts with a low-dimensional state rather than raw visual inputs, which is in **high-diemnsion**.
 
 ## Preprocessing
-Raw atari frame has $210 \times 160$ pixel images with a 128 color palette, which is in high dimension.
-In this paper, below process is used as preprocess procedure $\phi$.
+Raw atari frame has $210 \times 160 $ pixel images with a 128 color palette, which is in high dimension.
+In this paper, below process is used as preprocess procedure $ \phi $.
 
-- First convert RGB color channel to gray color scale and down sample to $110 \times 84$.
-- And crop the image to roughly capture the playing area, resulting in an $84 \times $84 pixel image.
-- Finally, by stacking last 4 frames, can obtain $84 \times 84 \times 4$ size of image.
+- First convert RGB color channel to gray color scale and down sample to $ 110 \times 84 $.
+- And crop the image to roughly capture the playing area, resulting in an $ 84 \times 84 $ pixel image.
+- Finally, by stacking last 4 frames, can obtain $ 84 \times 84 \times 4 $ size of image.
 
 ## Model architecture
 
@@ -92,21 +91,42 @@ In this paper, below process is used as preprocess procedure $\phi$.
 - Second cnn layer: $32$ number of $4 \times 4$ kernel with stride $2$ following by ReLU.
 - fully connected layer: consists of $256$ outputs following by ReLU.
 - outpyt layer: consists of number of action space $|\mathcal{A}|$.
+ 
+## Noteworthy points
+In Q Learning, Batch normalization is not used. Batch normalization normalizes channels of batched features. But in DQN algorithm to solve breakout reflects time relation to channels of features.
 
-# Experiments
-In this paper seven atari games - Beam Rider, Breakout, Enduro, Pong, $Q\ast$bert, Seaquest, Space Invaders - are trained with same network architecture and hyperparameters. Without leveraging game specific information, DQN algorithm operates robustly.
+Also, it does not utilize max pool. Original input images has size of $(84, 84)$, which have very small resolution. If utilize maxpool, then important pixel information can be disappeared.
+- Instead of using max pooling layer, in this paper, they utilizes stride convolution layer so that reduces sizes of feature map.
 
+# Experiment Methods
+In this paper seven atari games - Beam Rider, Breakout, Enduro, Pong, $Q^\ast$ bert, Seaquest, Space Invaders - are trained with same network architecture and hyperparameters. Without leveraging game specific information, DQN algorithm operates robustly.
+
+## settings
+- Use RMSProp optimization method (minibatch size: 32)
+- Behaviour policy: $\epsilon$-greedy 
+  - with $\epsilon$ annealed linearly from 1 to 0.1 over the first 1,000,000 frames
+  - fixed at 0.1 thereafter
+- Total 10,000,000 frames
+- Use replay memory size of 1,000,000 frames (most recent frames)
 
 ## Reward clipping
 One special point is reward clipping, which convert reward to one of $ \\{-1, 0, 1\\}$ by the sign of it. Clipping the rewards limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games.
 
 ## Frame skipping
-frame skipping technique, in which agent sees and selects action on every $k$th frame instead of every frame, and its last action is repeated on skipped frames.
+Frame skipping technique is used
+- in which agent sees and selects action on every $k$th frame instead of every frame, and its last action is repeated on skipped frames.
 
 
-# Noteworthy points
-In Q Learning, Batch normalization is not used. Batch normalization normalizes channels of batched features. But in DQN algorithm to solve breakout reflects time relation to channels of features.
+## Experiment Results
+![My Image1](image1.png)
+The figure shows how the average reward changes as the number of training steps increases. 
+- Each average reward is computed by running an $\epsilon$-greedy policy with $\epsilon=0.05$ for 10,000 steps, per 50,000 minibatch weight updates. (It tooks roughly 30 minutes of training time).
+It looks somewhat unstable. 
 
-Also, it does not utilize max pool. Original input images has size of $(84, 84)$, which have very small resolution. If utilize maxpool, then important pixel information can be disappeared.
+![My Image2](image2.png)
+So, Another more stable metric is presented in this paper, policy's estimated action-value function Q. It provides an estimate of how much discounted reward the agent can obtain by following its policy from any given state.
+- Before training is started, they collect a fixed set of states by running a random policy before training starts.
+- And per 50,000 minibatch weight updates, average the max Q value for fixed set of states, using $\epsilon$-greedy policy with $\epsilon=0.05$
 
-Instead of using max pooling layer, in this paper, they utilizes stride convolution layer so that reduces sizes of feature map.
+
+
