@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Papers on Gwannuu blog</title>
+    <link>https://gwannuu.github.io/papers/</link>
+    <description>Recent content in Papers on Gwannuu blog</description>
+    <generator>Hugo -- 0.143.1</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 14 Mar 2025 14:28:57 +0900</lastBuildDate>
+    <atom:link href="https://gwannuu.github.io/papers/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DQN</title>
+      <link>https://gwannuu.github.io/papers/dqn/</link>
+      <pubDate>Fri, 14 Mar 2025 14:28:57 +0900</pubDate>
+      <guid>https://gwannuu.github.io/papers/dqn/</guid>
+      <description>&lt;p&gt;In this paper[@mnih2013playing], atari game is solved with combination of CNN network and Q-Learning algorithm.&lt;/p&gt;
+&lt;h1 id=&#34;q-learning&#34;&gt;Q Learning&lt;/h1&gt;
+&lt;p&gt;Before talking about DQN, first see about Q-Learning.&lt;/p&gt;
+&lt;p&gt;The objective of Q-Learning is to find optimal action-state $$ Q^\ast (s,a) = \max_{\pi} \mathbb{E_{\pi}[r\mid s, a]} $$
+And in each step, learned agent selects greedy based on its learned action value function.
+In other words, in state $s \in \mathcal{S}$, agent select action $$a = \arg\max_{a^\prime \in \mathcal{A}(s)}Q(s, a^\prime) $$.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
