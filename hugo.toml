@@ -23,3 +23,7 @@ theme = ['PaperMod']
 allow = [
     '^pandoc$'
 ]
+
+[caches]  
+  [caches.images]
+    dir = ':cacheDir/images'
