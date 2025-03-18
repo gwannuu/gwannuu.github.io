@@ -27,3 +27,14 @@ allow = [
 [caches]  
   [caches.images]
     dir = ':cacheDir/images'
+
+
+[menu]
+  [[menu.main]]
+    identifier = "papers"
+    name = "Papers"
+    url = "/papers/"
+  [[menu.main]]
+    identifier = "articles"
+    name = "Articles"
+    url = "/articles/"
