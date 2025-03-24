@@ -12,7 +12,7 @@ In this paper[@mnih2013playing], atari game is solved with combination of CNN ne
 # Q Learning
 Before talking about DQN, first see about Q-Learning.
 
-The objective of Q-Learning is to find optimal action-state $$ Q^\ast (s,a) = \max_{\pi} \mathbb{E_{\pi}[r\mid s, a]} $$
+The objective of Q-Learning is to find optimal action-state $$ Q^\ast (s,a) = \max_{\pi} \mathbb{E}_{\pi}[r\mid s, a] $$
 And in each step, learned agent selects greedy based on its learned action value function. 
 In other words, in state $s \in \mathcal{S}$, agent select action $$a = \arg\max_{a^\prime \in \mathcal{A}(s)}Q(s, a^\prime) $$.
 
@@ -74,8 +74,10 @@ In this algorithm, assume that agent gets preprocessed $\phi(s)$ instead of raw 
   - **End for**  
 - **End for**
 
-# DQN with atari
+## DQN with atari
 There already exists Q-learning algorithms that has been combined with experience replay and a simple neural network. But it starts with a low-dimensional state rather than raw visual inputs, which is in **high-diemnsion**.
+
+# Training
 
 ## Preprocessing
 Raw atari frame has $210 \times 160 $ pixel images with a 128 color palette, which is in high dimension.
@@ -86,12 +88,18 @@ In this paper, below process is used as preprocess procedure $ \phi $.
 - Finally, by stacking last 4 frames, can obtain $ 84 \times 84 \times 4 $ size of image.
 
 ## Model architecture
-
 - First cnn layer: $16$ number of $8 \times 8$ kernel with stride $4$ following by ReLU.
 - Second cnn layer: $32$ number of $4 \times 4$ kernel with stride $2$ following by ReLU.
 - fully connected layer: consists of $256$ outputs following by ReLU.
 - outpyt layer: consists of number of action space $|\mathcal{A}|$.
- 
+
+- Use RMSProp optimization method (minibatch size: 32)
+- Behaviour policy: $\epsilon$-greedy 
+  - with $\epsilon$ annealed linearly from 1 to 0.1 over the first 1,000,000 frames
+  - fixed at 0.1 thereafter
+- Total 10,000,000 frames
+- Use replay memory size of 1,000,000 frames (most recent frames)
+
 ## Noteworthy points
 In Q Learning, Batch normalization is not used. Batch normalization normalizes channels of batched features. But in DQN algorithm to solve breakout reflects time relation to channels of features.
 
@@ -101,20 +109,13 @@ Also, it does not utilize max pool. Original input images has size of $(84, 84)$
 # Experiment Methods
 In this paper seven atari games - Beam Rider, Breakout, Enduro, Pong, $Q^\ast$ bert, Seaquest, Space Invaders - are trained with same network architecture and hyperparameters. Without leveraging game specific information, DQN algorithm operates robustly.
 
-## settings
-- Use RMSProp optimization method (minibatch size: 32)
-- Behaviour policy: $\epsilon$-greedy 
-  - with $\epsilon$ annealed linearly from 1 to 0.1 over the first 1,000,000 frames
-  - fixed at 0.1 thereafter
-- Total 10,000,000 frames
-- Use replay memory size of 1,000,000 frames (most recent frames)
-
 ## Reward clipping
 One special point is reward clipping, which convert reward to one of $ \\{-1, 0, 1\\}$ by the sign of it. Clipping the rewards limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games.
 
 ## Frame skipping
 Frame skipping technique is used
 - in which agent sees and selects action on every $k$th frame instead of every frame, and its last action is repeated on skipped frames.
+> For more information, https://www.reddit.com/r/reinforcementlearning/comments/fucovf/confused_about_frame_skipping_in_dqn/
 
 
 ## Experiment Results
