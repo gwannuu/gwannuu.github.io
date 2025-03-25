@@ -12,9 +12,12 @@ In this paper[@mnih2013playing], atari game is solved with combination of CNN ne
 # Q Learning
 Before talking about DQN, first see about Q-Learning.
 
-The objective of Q-Learning is to find optimal action-state $$ Q^\ast (s,a) = \max_{\pi} \mathbb{E}_{\pi}[r\mid s, a] $$
+The objective of Q-Learning is to find optimal action-state 
+$$ Q^\ast (s,a) = \max_{\pi} \mathbb{E}_{\pi}[r\mid s, a] $$
+
 And in each step, learned agent selects greedy based on its learned action value function. 
-In other words, in state $s \in \mathcal{S}$, agent select action $$a = \arg\max_{a^\prime \in \mathcal{A}(s)}Q(s, a^\prime) $$.
+In other words, in state $s \in \mathcal{S}$, agent select action 
+$$a = \arg\max_{a^\prime \in \mathcal{A}(s)}Q(s, a^\prime) $$
 
 Agent behaviors by greedy policy for well trained action value function $ Q(s,a) $ in model-free environment.
 
@@ -119,15 +122,16 @@ Frame skipping technique is used
 
 
 ## Experiment Results
-![My Image1](image1.png)
+
+![Average Rewards](image1.png "Average Rewards")
+
 The figure shows how the average reward changes as the number of training steps increases. 
 - Each average reward is computed by running an $\epsilon$-greedy policy with $\epsilon=0.05$ for 10,000 steps, per 50,000 minibatch weight updates. (It tooks roughly 30 minutes of training time).
 It looks somewhat unstable. 
 
-![My Image2](image2.png)
+![Average max Q values](image2.png "Average max Q values")
 So, Another more stable metric is presented in this paper, policy's estimated action-value function Q. It provides an estimate of how much discounted reward the agent can obtain by following its policy from any given state.
 - Before training is started, they collect a fixed set of states by running a random policy before training starts.
 - And per 50,000 minibatch weight updates, average the max Q value for fixed set of states, using $\epsilon$-greedy policy with $\epsilon=0.05$
-
 
 
