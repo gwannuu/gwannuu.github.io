@@ -4,7 +4,7 @@ title = 'Gwannuu blog'
 theme = ['PaperMod']
 
 [markup]
-    defaultMarkdownHandler = "goldmark"
+  defaultMarkdownHandler = "goldmark"
 #   [markup.goldmark]
 #     [markup.goldmark.extensions]
 #       [markup.goldmark.extensions.passthrough]
@@ -13,6 +13,11 @@ theme = ['PaperMod']
 #           block = [['\[', '\]'], ['$$', '$$']]
 #           inline = [['\(', '\)'], ['$', '$']]
 
+  [markup.goldmark]
+    [markup.goldmark.parser]
+      wrapStandAloneImageWithinParagraph = false
+      [markup.goldmark.parser.attribute]
+        block = true
 
 
 [params]
