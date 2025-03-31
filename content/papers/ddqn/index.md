@@ -24,8 +24,8 @@ V^\pi (s) = \mathbb{E}_{a \sim \pi(s)} [Q^\pi (s,a)] \\\
 A^\pi (s, a) = Q^\pi (s,a) - V^\pi (s)
 \end{gathered}
 $$
-- Note that $ \mathbb{E}_{a \sim \pi(s)} [A^\pi (s,a)] = 0$
-- Let me denote advantage as $ A(s,a;\theta, \alpha) $ and value function as $ V(s,a;\theta;\beta)$ for convenience.
+- Note that $\mathbb{E} [A^\pi (s,a)] = 0$
+- Let me denote advantage as $A(s,a;\theta, \alpha)$ and value function as $V(s,a;\theta,\beta)$ for convenience.
   - $\theta$ is shared parameter in CNN network for learning atari.
 
 ![Model architecture](pic1.png)
