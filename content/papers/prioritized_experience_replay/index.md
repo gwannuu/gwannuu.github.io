@@ -84,8 +84,37 @@ For stability reason, $w_i$ is normalized by multiplying $1/\max_i w_i$, which s
 In Deep Q learning, due to changing policy, learning process is highly non-stationary.
 So $\beta$ is linearly increased from $\beta_0$ to $1$ during training.
 
+# Experiment Result
+## Performance
+
+Hyperparameter $\alpha, \beta$ for PER methods for atari games are chosen by coarse grid search. 
+This grid search is evaluated on a subset of 8 games.
+For rank-based, sweet spot is $\alpha = 0.7, \beta_0 = 0.5$ and for proportional, sweet spot is $\alpha = 0.6, \beta_0 = 0.4$.
+
+![compare_performance_vis](pic6.png)
+![compare_performance](pic4.png)
+The figure above shows the performance of each algorithms. Each DQN and Double DQN algorithm is processed combined with uniform sampling(baseline), rank-based, or proportional sampling methods.
+
+![compare_performance_summary](pic5.png)
+And this figure summarizes results of above one.
+Those indicatest that PER improves performances in general cases.
+By adding PER to DQN, substantial improvement occurs in score on $41$ out of $49$ games, with the median normalized performance across $49$ games increasing from $48$% to $106$%.
+
+ 
+## Learning Speed
+![learning_speed_summary](pic7.png)
+Figure 4 illustrateds the learning speed of each methods; uniform, rank-based, proportional, and uniform DQN. 
+Uniform, which is displayed by black line, indicates performance of Double DQN with uniform sampling.
+Rank-based and proportional represents the performance of Double DQN using rank-based and proportional prioritization sampling methods, respectively.
+Figure 4 shows that each rank-based and proportional methods outperforms original Double DQN method, in which learned more quickly.
+
+![learning_speed](pic8.png)
+Figure 7 compares the performance of each method across individual games.
+
+
 # Supplymentary Explanation
-## Visual Explanation Rank-Based Method
+## Visual Explanation of Rank-Based Method
+### Propbability in Rank-based Approach
 Approximate the cumulative distribution function (CDF) with a piecewise linear function consisting of k segments, each covering an equal probability mass.
 At runtime, a segment is first sampled, and then a transition is uniformly sampled within that segment.
 Typically, k is chosen to be the same as the batch size.
@@ -177,3 +206,96 @@ plot_pdf_segments_plotly_with_grouping(1000, 15)
 
 ```
 This code snippet is used to make above two figures.
+
+### Weighted Importance Sampling Values in Rank-based Approach
+Also, I visualize $w_i$ corresponding to $P(i)$ in rank-based sampling methods when $\beta =1$.
+![wi_rank_based_overall](pic9.png)
+The figure above shows $w_i$ values corresponding with each $P(i)$, which increases linearly.
+
+```python
+import numpy as np
+import plotly.graph_objects as go
+from collections import Counter
+
+
+class PER_simulate:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = []
+        self.total = 0.0
+        for i in range(1, size + 1):
+            self.buffer.append(1 / i)
+            self.total += 1 / i
+        self.probs = np.array(self.buffer) / self.total
+        self.cum_probs = np.cumsum(self.probs)
+
+
+def compute_normalized_weights(P, beta, N):
+    raw = (1 / (N * P)) ** beta
+    return raw / np.max(raw)
+
+
+def plot_normalized_weights_plotly_with_grouping(
+    buffer_size, num_segments, beta=1.0, x_range=None
+):
+    per = PER_simulate(buffer_size)
+    ranks = np.arange(1, buffer_size + 1)
+    N = buffer_size
+
+    norm_weights = compute_normalized_weights(per.probs, beta, N)
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=ranks, y=norm_weights, mode="lines+markers", name="Normalized Weights"
+        )
+    )
+
+    boundaries = []
+    for seg in range(1, num_segments):
+        target = seg / num_segments
+        idx = np.searchsorted(per.cum_probs, target)
+        boundaries.append(idx + 1)
+
+    boundary_counts = Counter(boundaries)
+    unique_boundaries = sorted(boundary_counts.keys())
+
+    for b in unique_boundaries:
+        count = boundary_counts[b]
+        fig.add_shape(
+            type="line",
+            x0=b,
+            y0=0,
+            x1=b,
+            y1=max(norm_weights),
+            line=dict(color="red", dash="dash"),
+        )
+        annotation_text = f"{count}"
+        fig.add_annotation(
+            x=b,
+            y=max(norm_weights),
+            text=annotation_text,
+            showarrow=True,
+            arrowhead=1,
+            ax=20,
+            ay=-20,
+        )
+
+    fig.update_layout(
+        title=f"Interactive Normalized Weights (β={beta}) with {num_segments} Segments\n(Buffer Size = {buffer_size})",
+        xaxis_title="Rank (i)",
+        yaxis_title="Normalized Weight",
+        hovermode="closest",
+    )
+
+    if x_range is not None:
+        fig.update_xaxes(range=x_range)
+
+    fig.show()
+
+
+plot_normalized_weights_plotly_with_grouping(1000, 15, beta=1.0)
+
+```
+
+Above code snippet is used to visualize $w_i$ values.
